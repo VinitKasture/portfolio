@@ -15,6 +15,8 @@ connectToDB()
 
 const app = express();
 
+app.set('port', (process.env.PORT || 3000))
+
 app.use(express.static(path.join(__dirname, "views")));
 app.use(express.static(path.join(__dirname, "public")));
 app.set('view engine', 'ejs');
@@ -31,4 +33,4 @@ app.get('/', (req,res) => {
 
 app.use(require('./Routes/index'));
 
-app.listen(3000, () => {console.log("Listening on port 3000")})
+app.listen(app.get('port'), () => {console.log("Listening on port 3000")})
