@@ -6,29 +6,32 @@ const {sendEmail} = require('../Middleware/email')
 const verifyEmail = async (req,res) => {
     const accessToken = req.params.token
     const message = req.cookies["message"];
-
-    console.log(message)
-    function validateToken (req,res){
-        if (!accessToken) {
-            res.sendStatus(403);
-        } else {
-            try {
-            const validToken = jwt.verify(accessToken,process.env.ACCESS_TOKEN_SECRET);
-            if(message){
+    const clientEmail = req.cookies["clientEmail"];
+    if (!accessToken) {
+        res.sendStatus(403);
+    } else {
+        try {
+        const validToken = jwt.verify(accessToken,process.env.ACCESS_TOKEN_SECRET);
+        if(message){
+            if(clientEmail !== null){
                 sendEmail(validToken.email,"Confirmation","Hello, We have received your Email. Thankyou for your request.!");
-                sendEmail(process.env.ADMIN_ID,"New Client Request",message);
+                sendEmail(process.env.ADMIN_ID,"New Client Request",message + "Email - " + validToken.email);
+                res.clearCookie("clientEmail");
+                res.clearCookie("message");
+                res.render('confirmed');
             }else{
-                console.log("Message not found. [verifyEmail.js]")
+                res.send("<h1>Link Expired</h1>");
             }
-            console.log(validToken)
-            } catch (error) {
-                console.log("[emailVerify.js].validateToken catch error "+error);
-            }
+        }else{
+            console.log("Message not found. [verifyEmail.js]");
+            res.send("<h1>Link Expired</h1>");
         }
-    };
-    validateToken();
-    res.render('confirmed')
+        console.log(validToken)
+        } catch (error) {
+            console.log("[emailVerify.js].validateToken catch error "+error);
+            res.send("<h1>Link Expired</h1>");
+        }
+    }
 }
-
 
 module.exports = {verifyEmail}
