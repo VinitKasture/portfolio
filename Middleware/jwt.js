@@ -12,7 +12,7 @@ const createToken = (user, time) => {
 const validateToken = (req, res, next) => {
   const accessToken = req.cookies["Token"];
   // console.log("Token " + accessToken);
-  if (!accessToken || !emailToken) {
+  if (!accessToken) {
     res.sendStatus(403);
   } else {
     try {
