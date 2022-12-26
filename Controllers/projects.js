@@ -52,7 +52,7 @@ const deleteProject = async function (req,res) {
     const validProject = await Project.findById(id);
     if(validProject){
         await Project.findByIdAndDelete(id);
-        res.render('allProjects')
+        res.redirect('/allProjects')
     }else{
         res.sendStatus(403)
     }
